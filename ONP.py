@@ -1,38 +1,69 @@
 #ONP
-wejscie = input()
+import math
 
-stos = wejscie.split(" ")
-
-def oblicz(arg1, arg2, znak):
-    arg1 = int(arg1)
-    arg2 = int(arg2)
+def oblicz(arg1, znak, arg2):
+    arg1 = float(arg1)
+    arg2 = float(arg2)
     if znak == "+":
         return arg1 + arg2
     elif znak == "-":
         return arg1 - arg2
     elif znak == "/":
+        if arg2 == 0:
+            raise Exception(ZeroDivisionError)
         return arg1 / arg2
     elif znak == "*":
         return arg1 * arg2
+    elif znak == "^":
+        return arg1 ** arg2
+    elif znak == "sqrt":
+        return math.sqrt(arg1) #arg2 to 0
+    raise Exception("NIEZNANY SYMBOL")
 
-temp_stos = []
-print(temp_stos)
-ilosc_znakow = 0
-for i in range(len(stos)):
-    if (stos[i].isnumeric()):
-        temp_stos.append(stos[i])
+def sprawdz_znak(znak):
+    if len(znak) > 1:
+        znak = znak.replace(".","")
+        if znak[0] == "-":
+            znak = znak[1:]
+            return str(znak).isdigit()
+        return str(znak).isdigit()
     else:
-        if len(temp_stos) < 1:
-            print("za malo liczb")
+        return str(znak).isdigit()
+
+def odwrocona_notacja_polska(wejscie_tekst):
+    wejscie = wejscie_tekst.split(" ")
+    stos = []
+    wyjscie = []
+    idx = 0
+    while idx < len(wejscie):
+        znak = wejscie[idx]
+        if sprawdz_znak(znak):
+            wyjscie.append(float(znak))
         else:
-            liczba_1 = temp_stos[i-2-ilosc_znakow]
-            liczba_2 = temp_stos [i-1-ilosc_znakow]
-            print(oblicz(liczba_1, liczba_2, stos[i]))
-            ilosc_znakow += 1
-print(temp_stos)
+            stos.append(znak)
 
+        #jednoargumentowe 
+        if "sqrt" in stos:    
+            wynik = oblicz(wyjscie[-1], stos[0], 0)
+            stos.pop(0)
+            wyjscie.pop(-1)
+            wyjscie.append(wynik)
 
+        #dwuargumentowe
+        if stos != []:
+            if len(wyjscie)<2:
+                raise Exception("ZA MALO CYFR NA WEJSCIU")
+            print(wyjscie)
+            print(stos)
+            wynik = oblicz(wyjscie[-2], stos[0], wyjscie[-1])
+            wyjscie.pop(-1)
+            wyjscie.pop(-1)
+            stos.pop(0)
+            wyjscie.append(wynik)
+            
 
-# idx = 0
-# while len(stos) != 1:
-#     if 
+        idx += 1
+
+    if len(wyjscie)>1:
+        raise Exception("ZA DUZO WARTOSCI NA KONCU DZIALAN")
+    return wyjscie[-1]
