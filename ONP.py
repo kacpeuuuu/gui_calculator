@@ -67,4 +67,3 @@ def odwrocona_notacja_polska(wejscie_tekst):
     if len(wyjscie)>1:
         raise Exception("ZA DUZO WARTOSCI NA KONCU DZIALAN")
     return wyjscie[-1]
-e
